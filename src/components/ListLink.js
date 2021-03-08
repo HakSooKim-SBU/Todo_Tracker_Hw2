@@ -23,10 +23,7 @@ class ListLink extends Component {
         console.log("\t\t\tListLink render");
 
         return (
-            <div 
-                className='todo-list-button'
-                onClick={this.handleLoadList}
-            >
+            <div className='todo-list-button' onClick={this.handleLoadList} >
                 {this.props.toDoList.name}<br />
             </div>
         )

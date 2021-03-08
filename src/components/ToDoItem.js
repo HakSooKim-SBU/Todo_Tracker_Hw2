@@ -36,7 +36,7 @@ class ToDoItem extends Component {
                     <KeyboardArrowDown className='list-item-control todo-button' />
                     <Close className='list-item-control todo-button' />
                     <div className='list-item-control'></div>
-        <div className='list-item-control'></div>
+            <div className='list-item-control'></div>
                 </div>
             </div>
         )

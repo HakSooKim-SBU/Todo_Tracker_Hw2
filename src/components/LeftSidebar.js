@@ -1,6 +1,8 @@
 // IMPORT ALL THE THINGS NEEDED FROM OTHER JAVASCRIPT SOURCE FILES
 import React, { Component } from 'react';
 import ListLink from './ListLink'
+import Undo from '@material-ui/icons/Undo';
+import Redo from '@material-ui/icons/Redo';
 import AddBox from '@material-ui/icons/AddBox';
 
 class LeftSidebar extends Component {
@@ -22,6 +24,8 @@ class LeftSidebar extends Component {
                             id="add-list-button"
                             className="material-icons todo_button"
                             onClick={this.handleAddNewList} />
+                        <Undo id="undo-button" className="list-item-control material-icons todo-button" />
+                        <Redo id="redo-button" className="list-item-control material-icons todo-button" />
                     </span>
                 </div>
                 <div id="todo-lists-list">
