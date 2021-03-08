@@ -91,14 +91,32 @@ class App extends Component {
       name: 'Untitled',
       items: []
     };
-    
     return newToDoList;
   }
 
+
+  addNewToDoListItem = () => {
+    let copyOfToDoLists = this.state.toDoLists;
+    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
+    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
+    
+    listToUpdate.items.push(this.makeNewToDoListItem());
+
+    
+    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
+
+    this.setState({
+      toDoLists: copyOfToDoLists,
+      nextListItemId: this.state.nextListItemId + 1
+    });
+
+  }
+//
   makeNewToDoListItem = () =>  {
     let newToDoListItem = {
+      id: this.state.nextListItemId,
       description: "No Description",
-      dueDate: "none",
+      due_date: "No Date",
       status: "incomplete"
     };
     return newToDoListItem;
@@ -115,6 +133,7 @@ class App extends Component {
 
   render() {
     let items = this.state.currentList.items;
+    console.log(items);
     return (
       <div id="root">
         <Navbar />
@@ -123,7 +142,10 @@ class App extends Component {
           loadToDoListCallback={this.loadToDoList}
           addNewListCallback={this.addNewList}
         />
-        <Workspace toDoListItems={items} />
+        <Workspace 
+          toDoListItems={items}
+          addNewToDoListItemCallback={this.addNewToDoListItem}
+        />
       </div>
     );
   }
