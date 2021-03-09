@@ -40,7 +40,9 @@ class ToDoItem extends Component {
         this.setState(state => ({  hasStatusClicked: !state.hasStatusClicked    }));  
     }
 
-    
+    removeListItem = (event) =>{
+        this.props.removeListItemCallback(this.props.toDoListItem.id)
+    }
 
     changeTask = (event) => {
        let newTaskName = event.target.value;
@@ -60,7 +62,13 @@ class ToDoItem extends Component {
         this.props.changeStatusCallback(this.props.toDoListItem.id,newStatus);
      }
  
+     moveUpListItem = (event) =>{
+        this.props.moveListItemUpCallback(this.props.toDoListItem.id)
+     }
 
+     moveDownListItem = (event) =>{
+        this.props.moveListItemDownCallback(this.props.toDoListItem.id)
+     }
 
     render() {
         // DISPLAY WHERE WE ARE
@@ -92,16 +100,16 @@ class ToDoItem extends Component {
             <option value = 'complete'> complete  </option>
             <option value = 'incomplete'> incomplete  </option>
             </select> 
-  
             : <div onClick={this.statusHandleClick} className='item-col status-col' className={statusType}>{listItem.status}</div>
-
-
             } 
                 <div className='item-col test-4-col'></div>
                 <div className='item-col list-controls-col'>
-                    <KeyboardArrowUp className='list-item-control todo-button' />
-                    <KeyboardArrowDown className='list-item-control todo-button' />
-                    <Close className='list-item-control todo-button' />
+                    <KeyboardArrowUp className='list-item-control todo-button'
+                        onClick = {this.moveUpListItem} />
+                    <KeyboardArrowDown className='list-item-control todo-button'
+                        onClick = {this.moveDownListItem} />
+                    <Close className='list-item-control todo-button' 
+                        onClick={this.removeListItem}/>
                     <div className='list-item-control'></div>
                     <div className='list-item-control'></div>
                 </div>

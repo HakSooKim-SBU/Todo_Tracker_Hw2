@@ -14,6 +14,14 @@ class LeftSidebar extends Component {
         this.props.addNewListCallback();
     }
 
+    handleRedo = () =>{
+        this.props.redoCallback()
+    }
+
+    handleUndo = () =>{
+        this.props.undoCallback()
+    }
+
     render() {
         return (
             <div id="left-sidebar">
@@ -24,8 +32,15 @@ class LeftSidebar extends Component {
                             id="add-list-button"
                             className="material-icons todo_button"
                             onClick={this.handleAddNewList} />
-                        <Undo id="undo-button" className="list-item-control material-icons todo-button" />
-                        <Redo id="redo-button" className="list-item-control material-icons todo-button" />
+                        <Undo 
+                            id="undo-button" 
+                            className="list-item-control material-icons todo-button" 
+                            onClick={this.handleUndo}/>
+                        <Redo 
+                            id="redo-button" 
+                            className="list-item-control material-icons todo-button" 
+                            onClick={this.handleRedo}/>
+                            
                     </span>
                 </div>
                 <div id="todo-lists-list">

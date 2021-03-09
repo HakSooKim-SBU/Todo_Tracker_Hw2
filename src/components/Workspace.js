@@ -13,7 +13,7 @@ class Workspace extends Component {
 
 
     handleAddNewToDoListItem = () => {
-        this.props.addNewToDoListItemCallback();
+        this.props.registerAddNewItemListTransactionCallback();
     }
 
     render() {
@@ -40,6 +40,9 @@ class Workspace extends Component {
                             changeTaskNameCallback = {this.props.changeTaskNameCallback}
                             changeDueDateCallback = {this.props.changeDueDateCallback}
                             changeStatusCallback = {this.props.changeStatusCallback}
+                            removeListItemCallback = {this.props.removeListItemCallback}
+                            moveListItemUpCallback = {this.props.moveListItemUpCallback}
+                            moveListItemDownCallback = {this.props.moveListItemDownCallback}
                         />))
                     }
                 </div>
