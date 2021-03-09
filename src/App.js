@@ -77,7 +77,7 @@ class App extends Component {
     let newToDoListsList = [...newToDoListInList, ...this.state.toDoLists];
     let newToDoList = newToDoListInList[0];
 
-    // AND SET THE STATE, WHICH SHOULD FORCE A render
+    // AND SET THE STATE, WHICH SHOULD FORCE A render    
     this.setState({
       toDoLists: newToDoListsList,
       currentList: newToDoList,
@@ -122,6 +122,75 @@ class App extends Component {
     return newToDoListItem;
   }
 
+  changeTaskName = (toDoListItemIDToBeChanged, newTaskName) => {
+    let copyOfToDoLists = this.state.toDoLists;
+    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
+    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
+    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
+    listToUpdate.items[indexOfListItemToBeChanged] = {
+      id: listToUpdate.items[indexOfListItemToBeChanged].id,
+      description: newTaskName,
+      due_date: listToUpdate.items[indexOfListItemToBeChanged].due_date,
+      status: listToUpdate.items[indexOfListItemToBeChanged].status
+    }
+    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
+    this.setState({
+      toDoLists: copyOfToDoLists,
+    });
+
+  }
+
+  changeDueDate = (toDoListItemIDToBeChanged, newDueDate) => {
+    if (newDueDate === ""){
+      newDueDate = "No Date";
+    }
+    let copyOfToDoLists = this.state.toDoLists;
+    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
+    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
+    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
+    
+    listToUpdate.items[indexOfListItemToBeChanged] = {
+      id: listToUpdate.items[indexOfListItemToBeChanged].id,
+      description: listToUpdate.items[indexOfListItemToBeChanged].description,
+      due_date: newDueDate,
+      status: listToUpdate.items[indexOfListItemToBeChanged].status
+    }
+    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
+    this.setState({
+      toDoLists: copyOfToDoLists,
+    });
+
+  }
+
+  changeStatus= (toDoListItemIDToBeChanged, newStatus) => {
+    
+    let copyOfToDoLists = this.state.toDoLists;
+    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
+    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
+    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
+    
+    listToUpdate.items[indexOfListItemToBeChanged] = {
+      id: listToUpdate.items[indexOfListItemToBeChanged].id,
+      description: listToUpdate.items[indexOfListItemToBeChanged].description,
+      due_date: listToUpdate.items[indexOfListItemToBeChanged].due_date,
+      status: newStatus
+    }
+    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
+    this.setState({
+      toDoLists: copyOfToDoLists,
+    });
+
+  }
+
+  findIndexOfListItemWithListItemIDInCurrentList = (listItemIDtoFind) => {
+    for (let i = 0; i < this.state.currentList.items.length; i++) {
+      if (this.state.currentList.items[i].id === listItemIDtoFind){
+        return i;
+      }
+    }
+  }
+
+
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
   afterToDoListsChangeComplete = () => {
     console.log("App updated currentToDoList: " + this.state.currentList);
@@ -145,6 +214,9 @@ class App extends Component {
         <Workspace 
           toDoListItems={items}
           addNewToDoListItemCallback={this.addNewToDoListItem}
+          changeTaskNameCallback = {this.changeTaskName}
+          changeDueDateCallback = {this.changeDueDate}
+          changeStatusCallback = {this.changeStatus}
         />
       </div>
     );
