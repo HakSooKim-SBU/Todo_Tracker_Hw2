@@ -37,12 +37,12 @@ class Workspace extends Component {
                         <ToDoItem
                             key={toDoListItem.id}
                             toDoListItem={toDoListItem}     // PASS THE ITEM TO THE CHILDREN
-                            changeTaskNameCallback = {this.props.changeTaskNameCallback}
-                            changeDueDateCallback = {this.props.changeDueDateCallback}
-                            changeStatusCallback = {this.props.changeStatusCallback}
-                            removeListItemCallback = {this.props.removeListItemCallback}
-                            moveListItemUpCallback = {this.props.moveListItemUpCallback}
-                            moveListItemDownCallback = {this.props.moveListItemDownCallback}
+                            registerChangeTaskNameCallback = {this.props.registerChangeTaskNameCallback}
+                            registerChangeDueDateCallback = {this.props.registerChangeDueDateCallback}
+                            registerChangeStatusCallback = {this.props.registerChangeStatusCallback}
+                            registerDeleteListItemCallback = {this.props.registerDeleteListItemCallback}
+                            registerMoveListItemUpCallback = {this.props.registerMoveListItemUpCallback}
+                            registerMoveListItemDownCallback = {this.props.registerMoveListItemDownCallback}
                         />))
                     }
                 </div>

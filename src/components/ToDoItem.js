@@ -41,33 +41,33 @@ class ToDoItem extends Component {
     }
 
     removeListItem = (event) =>{
-        this.props.removeListItemCallback(this.props.toDoListItem.id)
+        this.props.registerDeleteListItemCallback(this.props.toDoListItem.id)
     }
 
     changeTask = (event) => {
        let newTaskName = event.target.value;
        console.log(newTaskName);
-       this.props.changeTaskNameCallback(this.props.toDoListItem.id,newTaskName);
+       this.props.registerChangeTaskNameCallback(this.props.toDoListItem.id,newTaskName);
     }
 
     changeDueDate = (event) =>{
        let newDueDate = event.target.value;
        console.log(newDueDate);
-       this.props.changeDueDateCallback(this.props.toDoListItem.id,newDueDate);
+       this.props.registerChangeDueDateCallback(this.props.toDoListItem.id,newDueDate);
     }
 
     changeStatus = (event) =>{
         let newStatus = event.target.value;
         console.log(newStatus);
-        this.props.changeStatusCallback(this.props.toDoListItem.id,newStatus);
+        this.props.registerChangeStatusCallback(this.props.toDoListItem.id,newStatus);
      }
  
      moveUpListItem = (event) =>{
-        this.props.moveListItemUpCallback(this.props.toDoListItem.id)
+        this.props.registerMoveListItemUpCallback(this.props.toDoListItem.id)
      }
 
      moveDownListItem = (event) =>{
-        this.props.moveListItemDownCallback(this.props.toDoListItem.id)
+        this.props.registerMoveListItemDownCallback(this.props.toDoListItem.id)
      }
 
     render() {

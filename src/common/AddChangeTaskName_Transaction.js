@@ -1,0 +1,23 @@
+'use strict'
+
+// IMPORT ALL THE THINGS NEEDED FROM OTHER JAVASCRIPT SOURCE FILES
+import { jsTPS_Transaction } from "./jsTPS.js"
+
+// THIS TRANSACTION IS FOR ADDING A NEW ITEM TO A TODO LIST
+export default class AddChangeTaskName_Transaction extends jsTPS_Transaction {
+    constructor(initApp, toDoListItemToBeChanged, oldTaskName, newTaskName ) {
+        super();
+        this.app = initApp;
+        this.toDoListItemToBeChanged = toDoListItemToBeChanged;
+        this.oldTaskName = oldTaskName;
+        this.newTaskName = newTaskName;
+    }
+    
+    doTransaction() {
+        this.app.changeTaskName(this.toDoListItemToBeChanged,this.newTaskName);
+    }
+
+    undoTransaction() {
+        this.app.changeTaskName(this.toDoListItemToBeChanged,this.oldTaskName);
+        }
+}

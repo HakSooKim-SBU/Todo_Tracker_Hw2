@@ -4,6 +4,10 @@ import testData from './test/testData.json'
 import jsTPS from './common/jsTPS'
 import AddNewListItem_Transaction from './common/AddNewListItem_Transaction.js'
 import AddMoveListItem_Transaction from './common/AddMoveListItem_Transaction.js'
+import AddDeleteListItem_Transaction from './common/AddDeleteListItem_Transaction.js'
+import AddChangeStatus_Transaction from './common/AddChangeStatus_Transaction.js'
+import AddChangeDueDate_Transaction from './common/AddChangeDueDate_Transaction.js'
+import AddChangeTaskName_Transaction from './common/AddChangeTaskName_Transaction.js'
 
 
 
@@ -138,6 +142,17 @@ export class App extends Component {
     return newToDoListItem;
   }
 
+  registerChangeTaskName = (toDoListItemIDToBeChanged, newTaskName) => {
+    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
+    let toDoListItemToBeRemoved = this.state.currentList.items[indexOfListItemToBeChanged];
+    let transaction = new AddChangeTaskName_Transaction(this,toDoListItemIDToBeChanged,toDoListItemToBeRemoved.description,newTaskName);
+    let copyOfTps = this.state.tps;
+    copyOfTps.addTransaction(transaction);
+    this.setState({
+      tps:copyOfTps
+    })
+  }
+
   changeTaskName = (toDoListItemIDToBeChanged, newTaskName) => {
     let copyOfToDoLists = this.state.toDoLists;
     let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
@@ -154,6 +169,17 @@ export class App extends Component {
       toDoLists: copyOfToDoLists,
     });
 
+  }
+
+  registerChangeDueDate = (toDoListItemIDToBeChanged, newDueDate) => {
+    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
+    let toDoListItemToBeRemoved = this.state.currentList.items[indexOfListItemToBeChanged];
+    let transaction = new AddChangeDueDate_Transaction(this,toDoListItemIDToBeChanged,toDoListItemToBeRemoved.due_date,newDueDate);
+    let copyOfTps = this.state.tps;
+    copyOfTps.addTransaction(transaction);
+    this.setState({
+      tps:copyOfTps
+    })
   }
 
   changeDueDate = (toDoListItemIDToBeChanged, newDueDate) => {
@@ -178,8 +204,19 @@ export class App extends Component {
 
   }
 
+  registerChangeStatus = (toDoListItemIDToBeChanged, newStatus) => {
+
+    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
+    let toDoListItemToBeRemoved = this.state.currentList.items[indexOfListItemToBeChanged];
+    let transaction = new AddChangeStatus_Transaction(this,toDoListItemIDToBeChanged,toDoListItemToBeRemoved.status,newStatus);
+    let copyOfTps = this.state.tps;
+    copyOfTps.addTransaction(transaction);
+    this.setState({
+      tps:copyOfTps
+    })
+  }
+
   changeStatus= (toDoListItemIDToBeChanged, newStatus) => {
-    
     let copyOfToDoLists = this.state.toDoLists;
     let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
     let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
@@ -214,11 +251,22 @@ export class App extends Component {
     return itemToBeRemoved
   }
 
-  registerMoveListItemDown =(toDoListItemIDToBeMoved) => {
+  registerDeleteListItem = (toDoListItemIDToBeRemoved) => {
+    let initIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeRemoved);
+    let toDoListItemToBeRemoved = this.state.currentList.items[initIndex];
+    let transaction = new AddDeleteListItem_Transaction(this,initIndex,toDoListItemToBeRemoved);
+    let copyOfTps = this.state.tps;
+    copyOfTps.addTransaction(transaction);
+    this.setState({
+      tps:copyOfTps
+    })
+  }
+
+  registerMoveListItemDown =(toDoListItemToBeMoved) => {
     let copyOfToDoLists = this.state.toDoLists;
     let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
     let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let foundIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeMoved);
+    let foundIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemToBeMoved);
     if (foundIndex === listToUpdate.items.length - 1){
       return
     }
@@ -233,11 +281,11 @@ export class App extends Component {
         
   }
 
-  registerMoveListItemUp =(toDoListItemIDToBeMoved) => {
+  registerMoveListItemUp =(toDoListItemToBeMoved) => {
     let copyOfToDoLists = this.state.toDoLists;
     let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
     let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let foundIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeMoved);
+    let foundIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemToBeMoved);
     if (foundIndex === 0){
       return
     }
@@ -267,8 +315,18 @@ export class App extends Component {
 }
     
   
+addItemAtIndex(listItemToAdd, index) {
+  let copyOfToDoLists = this.state.toDoLists;
+  let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
+  let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
+  listToUpdate.items.splice(index, 0, listItemToAdd);
+  copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
 
-  
+  this.setState({
+    toDoLists: copyOfToDoLists,
+  });
+  }
+
 
   findIndexOfListItemWithListItemIDInCurrentList = (listItemIDtoFind) => {
     for (let i = 0; i < this.state.currentList.items.length; i++) {
@@ -277,8 +335,6 @@ export class App extends Component {
       }
     }
   }
-
-
 
 
 
@@ -311,7 +367,6 @@ redo = () =>{
 
 
 
-  
 
 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
@@ -339,12 +394,12 @@ redo = () =>{
         <Workspace 
           toDoListItems={items}
           registerAddNewItemListTransactionCallback={this.registerAddNewItemListTransaction}
-          changeTaskNameCallback = {this.changeTaskName}
-          changeDueDateCallback = {this.changeDueDate}
-          changeStatusCallback = {this.changeStatus}
-          removeListItemCallback = {this.removeListItem}
-          moveListItemUpCallback = {this.registerMoveListItemUp}
-          moveListItemDownCallback = {this.registerMoveListItemDown}
+          registerChangeTaskNameCallback = {this.registerChangeTaskName}
+          registerChangeDueDateCallback = {this.registerChangeDueDate}
+          registerChangeStatusCallback = {this.registerChangeStatus}
+          registerDeleteListItemCallback = {this.registerDeleteListItem}
+          registerMoveListItemUpCallback = {this.registerMoveListItemUp}
+          registerMoveListItemDownCallback = {this.registerMoveListItemDown}
         />
       </div>
     );
