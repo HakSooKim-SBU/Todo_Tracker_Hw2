@@ -18,12 +18,19 @@ class ListLink extends Component {
         this.props.loadToDoListCallback(this.props.toDoList);
     }
 
+    // handleRenameList = (listToBeRenamedID) => {
+    //     // this.props.handleRenameListCallback();
+    // }
+
     render() {
         // DISPLAY WHERE WE ARE
-        console.log("\t\t\tListLink render");
+        // console.log("\t\t\tListLink render");
 
         return (
-            <div className='todo-list-button' onClick={this.handleLoadList} >
+            // <div className='todo-list-button' onClick={this.handleLoadList} onDoubleClick= {this.handleRenameList} >
+            //     {this.props.toDoList.name}<br />
+            // </div>
+            <div className='todo-list-button' onClick={this.handleLoadList}  >
                 {this.props.toDoList.name}<br />
             </div>
         )
