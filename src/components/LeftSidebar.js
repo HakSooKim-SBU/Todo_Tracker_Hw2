@@ -10,6 +10,8 @@ class LeftSidebar extends Component {
         super(props);
     }
 
+   
+
     handleAddNewList = () => {
         this.props.addNewListCallback();
     }
@@ -21,6 +23,8 @@ class LeftSidebar extends Component {
     handleUndo = () =>{
         this.props.undoCallback()
     }
+
+    
 
     render() {
         return (
@@ -34,11 +38,11 @@ class LeftSidebar extends Component {
                             onClick={this.handleAddNewList} />
                         <Undo 
                             id="undo-button" 
-                            className="list-item-control material-icons todo-button" 
+                            className={"list-item-control material-icons todo-button" + ( !this.props.tps.hasTransactionToUndo() ? ' disable_button' : '') }
                             onClick={this.handleUndo}/>
                         <Redo 
                             id="redo-button" 
-                            className="list-item-control material-icons todo-button" 
+                            className={"list-item-control material-icons todo-button" + ( !this.props.tps.hasTransactionToRedo() ? ' disable_button' : '') }
                             onClick={this.handleRedo}/>
                             
                     </span>

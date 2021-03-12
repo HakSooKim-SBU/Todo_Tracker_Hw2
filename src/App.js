@@ -60,6 +60,7 @@ export class App extends Component {
       currentList: {items: []},
       nextListId: highListId+1,
       nextListItemId: highListItemId+1,
+      deleteConfirmationClicked: false,
       useVerboseFeedback: true
     }
   }
@@ -73,7 +74,7 @@ export class App extends Component {
       testList.id !== toDoList.id
     );
     nextLists.unshift(toDoList);
-
+    this.tps = new jsTPS();
     this.setState({
       toDoLists: nextLists,
       currentList: toDoList
@@ -318,36 +319,62 @@ export class App extends Component {
     this.tps.addTransaction(transaction);        
   }
 
-  changeListName(listIDToBeRenamed){
+  changeListName = (ToDoListsListIDToRename, newCurrentListName) => {
+    if (this.state.currentList.id === ToDoListsListIDToRename){
+
+      let updatedToDoLists = this.state.toDoLists.map((toDoList) =>{
+        if (toDoList.id === ToDoListsListIDToRename){
+          toDoList.name = newCurrentListName;
+          return toDoList;
+        }
+        else {
+          return toDoList;
+        }
+      })
+
+      this.setState({
+        toDoLists: updatedToDoLists
+      }, this.afterToDoListsChangeComplete);
+
+    }
+    else{
+      return
+    }
   }
 
 
   undo = () =>{
     if (this.tps.hasTransactionToUndo()) {
         this.tps.undoTransaction();
-        // if (!this.state.tps.hasTransactionToUndo()) {
-        //     this.view.disableButton("undo-button");
-        // }
-        // this.view.enableButton("redo-button");
     }
-} 
+  } 
 
 redo = () =>{
     if (this.tps.hasTransactionToRedo()) {
         this.tps.doTransaction();
-        // if (!this.tps.hasTransactionToRedo()) {
-        //     this.view.disableButton("redo-button");
-        // }
-        // this.view.enableButton("undo-button");
     }
 }
 
+confirmationClickHandle = () =>{
+  this.setState(state => ({  deleteConfirmationClicked: !state.deleteConfirmationClicked    }));  
+}
 
+confirmDeletion = () =>{
+  this.tps = new jsTPS();
+  let currentListId = this.state.currentList.id;
+  let removeCurrentList = this.state.toDoLists.filter(testList =>
+    testList.id !== currentListId
+  );
+  this.setState({
+    toDoLists:removeCurrentList,
+    currentList: {items: []},
+  })
+  this.confirmationClickHandle()
+}
 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
   afterToDoListsChangeComplete = () => {
     console.log("App updated currentToDoList: " + this.state.currentList);
-
     // WILL THIS WORK? @todo
     let toDoListsString = JSON.stringify(this.state.toDoLists);
     localStorage.setItem("recentLists", toDoListsString);
@@ -355,31 +382,47 @@ redo = () =>{
 
   render() {
     let items = this.state.currentList.items;
-    // console.log(items);
-    return (
-      <div id="root">
-        <Navbar />
-        <LeftSidebar 
-          toDoLists={this.state.toDoLists}
-          loadToDoListCallback={this.loadToDoList}
-          addNewListCallback={this.addNewList}
-          redoCallback = {this.redo}
-          undoCallback = {this.undo}
-          changeListNameCallback = {this.changeListName}
-        />
-        <Workspace 
-          toDoListItems={items}
-          registerAddNewItemListTransactionCallback={this.registerAddNewItemListTransaction}
-          registerChangeTaskNameCallback = {this.registerChangeTaskName}
-          registerChangeDueDateCallback = {this.registerChangeDueDate}
-          registerChangeStatusCallback = {this.registerChangeStatus}
-          registerDeleteListItemCallback = {this.registerDeleteListItem}
-          registerMoveListItemUpCallback = {this.registerMoveListItemUp}
-          registerMoveListItemDownCallback = {this.registerMoveListItemDown}
-        />
-      </div>
-    );
+        return (
+          <div id="root">
+            <Navbar />
+            <LeftSidebar 
+              toDoLists={this.state.toDoLists}
+              loadToDoListCallback={this.loadToDoList}
+              addNewListCallback={this.addNewList}
+              tps = {this.tps}
+              redoCallback = {this.redo}
+              undoCallback = {this.undo}
+              changeListNameCallback = {this.changeListName}
+            />
+            <Workspace 
+              toDoListItems={items}
+              confirmationClickHandleCallback = {this.confirmationClickHandle}
+              registerAddNewItemListTransactionCallback={this.registerAddNewItemListTransaction}
+              registerChangeTaskNameCallback = {this.registerChangeTaskName}
+              registerChangeDueDateCallback = {this.registerChangeDueDate}
+              registerChangeStatusCallback = {this.registerChangeStatus}
+              registerDeleteListItemCallback = {this.registerDeleteListItem}
+              registerMoveListItemUpCallback = {this.registerMoveListItemUp}
+              registerMoveListItemDownCallback = {this.registerMoveListItemDown}
+            />
+            <div id = "modal-overlay" style={{ display: this.state.deleteConfirmationClicked ? 'block' : 'none' }} >
+              <div className="modal" id="delete_modal" >
+                <div className="modal_dialog">
+                  <header className="dialog_header">
+                    Delete list?
+                    <div onClick={this.confirmationClickHandle} id="close-modal-button" className="list-item-control material-icons todo-button">close</div>
+                  </header>
+                  <button id="dialog_yes_button" onClick={this.confirmDeletion}  className="modal-button">Confirm</button>
+                  <button id="dialog_no_button" onClick={this.confirmationClickHandle} className="modal-button">Cancel</button>
+            
+                </div>
+              </div>
+             </div>
+          </div>
+        );
+    }
+    
   }
-}
+
 
 export default App;

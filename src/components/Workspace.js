@@ -16,6 +16,10 @@ class Workspace extends Component {
         this.props.registerAddNewItemListTransactionCallback();
     }
 
+    handleDeleteListButton = () => {
+        this.props.confirmationClickHandleCallback();
+    }
+
     render() {
         return (
             <div id="workspace">
@@ -27,7 +31,8 @@ class Workspace extends Component {
                         
                         <AddBox id="add-item-button" className="list-item-control material-icons todo-button" 
                             onClick={this.handleAddNewToDoListItem} />
-                        <Delete id="delete-list-button" className="list-item-control material-icons todo-button" />
+                        <Delete id="delete-list-button" className="list-item-control material-icons todo-button" 
+                            onClick={this.handleDeleteListButton} />
                         <Close id="close-list-button" className="list-item-control material-icons todo-button" />
                     </div>
                 </div>
