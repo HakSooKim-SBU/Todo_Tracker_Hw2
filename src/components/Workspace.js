@@ -20,7 +20,12 @@ class Workspace extends Component {
         this.props.confirmationClickHandleCallback();
     }
 
+    handleCloseListbutton = () =>{
+        this.props.cancelBeingEditedCallback();
+    }
+    
     render() {
+        let isBeingEdited = this.props.checkIfBeingEditedCallback();
         return (
             <div id="workspace">
                 <div id="todo-list-header-card" className="list-item-card">
@@ -29,11 +34,12 @@ class Workspace extends Component {
                     <div id="status-col-header" className="item-col todo-button">Status</div>
                     <div className="item-col" display="flex" flexDirection="row" flexWrap="nowrap">
                         
-                        <AddBox id="add-item-button" className="list-item-control material-icons todo-button" 
+                        <AddBox id="add-item-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button " : "") }
                             onClick={this.handleAddNewToDoListItem} />
-                        <Delete id="delete-list-button" className="list-item-control material-icons todo-button" 
+                        <Delete id="delete-list-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button " : "") }
                             onClick={this.handleDeleteListButton} />
-                        <Close id="close-list-button" className="list-item-control material-icons todo-button" />
+                        <Close id="close-list-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button " : "") }
+                            onClick={this.handleCloseListbutton} />
                     </div>
                 </div>
                 <div id="todo-list-items-div">

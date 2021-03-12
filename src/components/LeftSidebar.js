@@ -26,7 +26,11 @@ class LeftSidebar extends Component {
 
     
 
+    
+
     render() {
+        let isBeingEdited = this.props.checkIfBeingEditedCallback();
+        console.log(isBeingEdited);
         return (
             <div id="left-sidebar">
                 <div id="left-sidebar-header" class="section-header">
@@ -34,7 +38,7 @@ class LeftSidebar extends Component {
                     <span class="left-sidebar-controls" id="add-undo-redo-box">
                         <AddBox 
                             id="add-list-button"
-                            className="material-icons todo_button"
+                            className={"material-icons todo_button " + ( isBeingEdited ? " disable_button " : "") }
                             onClick={this.handleAddNewList} />
                         <Undo 
                             id="undo-button" 

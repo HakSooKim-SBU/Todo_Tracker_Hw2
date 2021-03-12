@@ -112,7 +112,7 @@
 }
 
 .disable_button{
-    color:     #322d2d;
-    pointer-events:none;
-    cursor: default;
+    color:     #322d2d !important;
+    pointer-events:none !important;
+    cursor: default !important;
 }

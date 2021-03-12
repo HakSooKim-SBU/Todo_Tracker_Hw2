@@ -53,7 +53,6 @@ export class App extends Component {
         highListItemId = toDoListItem.id;
       }
     };
-    let tps = new jsTPS();
     // SETUP OUR APP STATE
     this.state = {
       toDoLists: recentLists,
@@ -356,7 +355,9 @@ redo = () =>{
 }
 
 confirmationClickHandle = () =>{
-  this.setState(state => ({  deleteConfirmationClicked: !state.deleteConfirmationClicked    }));  
+  this.setState({  deleteConfirmationClicked: !this.state.deleteConfirmationClicked 
+    },this.afterToDoListsChangeComplete);  
+    
 }
 
 confirmDeletion = () =>{
@@ -366,11 +367,23 @@ confirmDeletion = () =>{
     testList.id !== currentListId
   );
   this.setState({
-    toDoLists:removeCurrentList,
+    toDoLists: removeCurrentList,
     currentList: {items: []},
-  })
+  }, this.afterToDoListsChangeComplete);
   this.confirmationClickHandle()
 }
+
+  checkIfBeingEdited = () =>{
+  return( Number.isInteger(this.state.currentList.id))
+  }
+
+  cancelBeingEdited = () => {
+    this.tps = new jsTPS();
+    this.setState({
+      currentList: {items: []},
+    }, this.afterToDoListsChangeComplete);
+  }
+
 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
   afterToDoListsChangeComplete = () => {
@@ -393,6 +406,7 @@ confirmDeletion = () =>{
               redoCallback = {this.redo}
               undoCallback = {this.undo}
               changeListNameCallback = {this.changeListName}
+              checkIfBeingEditedCallback = {this.checkIfBeingEdited}
             />
             <Workspace 
               toDoListItems={items}
@@ -404,6 +418,8 @@ confirmDeletion = () =>{
               registerDeleteListItemCallback = {this.registerDeleteListItem}
               registerMoveListItemUpCallback = {this.registerMoveListItemUp}
               registerMoveListItemDownCallback = {this.registerMoveListItemDown}
+              cancelBeingEditedCallback = {this.cancelBeingEdited}
+              checkIfBeingEditedCallback = {this.checkIfBeingEdited}
             />
             <div id = "modal-overlay" style={{ display: this.state.deleteConfirmationClicked ? 'block' : 'none' }} >
               <div className="modal" id="delete_modal" >
