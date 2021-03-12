@@ -56,7 +56,6 @@ export class App extends Component {
     let tps = new jsTPS();
     // SETUP OUR APP STATE
     this.state = {
-      tps : tps,
       toDoLists: recentLists,
       currentList: {items: []},
       nextListId: highListId+1,
@@ -78,7 +77,7 @@ export class App extends Component {
     this.setState({
       toDoLists: nextLists,
       currentList: toDoList
-    });
+    }, this.afterToDoListsChangeComplete);
   }
 
   addNewList = () => {
@@ -105,33 +104,29 @@ export class App extends Component {
 
   registerAddNewItemListTransaction = () =>{
     let transaction = new AddNewListItem_Transaction(this);
-    let copyOfTps = this.state.tps;
-    copyOfTps.addTransaction(transaction);
-
-    this.setState({
-      tps:copyOfTps
-    })
-    
-    
+    this.tps.addTransaction(transaction);
   }
 
   addNewToDoListItem = () => {
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let newListItem = this.makeNewToDoListItem()
-    listToUpdate.items.push(newListItem);
-
-    
-    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
-
+    let currentListId = this.state.currentList.id;
+    let newListItem = this.makeNewToDoListItem();
+    let updatedToDoListsList = [...this.state.currentList.items, newListItem];
+    console.log(this.state.toDoLists);
+    let updatedToDoLists = this.state.toDoLists.map((toDoList) => {
+      if (toDoList.id === currentListId){
+        toDoList.items = updatedToDoListsList; 
+        return toDoList;
+      }
+      else 
+        return toDoList;
+    });   
     this.setState({
-      toDoLists: copyOfToDoLists,
+      toDoLists: updatedToDoLists,
       nextListItemId: this.state.nextListItemId + 1
-    });
+    }, this.afterToDoListsChangeComplete);
     return newListItem
   }
-//
+
   makeNewToDoListItem = () =>  {
     let newToDoListItem = {
       id: this.state.nextListItemId,
@@ -139,257 +134,213 @@ export class App extends Component {
       due_date: "No Date",
       status: "incomplete"
     };
-    return newToDoListItem;
+    return newToDoListItem
   }
 
-  
+  removeListItem =(toDoListItemIDToBeRemoved) => {
+    let itemToBeRemoved = this.state.currentList.items.find((ListItem) => ListItem.id === toDoListItemIDToBeRemoved);
+    let currentListId = this.state.currentList.id;
+    let updatedToDoListsList = this.state.currentList.items.filter((ListItem) => ListItem.id !== toDoListItemIDToBeRemoved);
+    let updatedToDoLists = this.state.toDoLists.map((toDoList) =>{
+      if (toDoList.id === currentListId){
+        toDoList.items = updatedToDoListsList; 
+        return toDoList;
+      }
+      else 
+        return toDoList;
+    });
+    this.setState({
+      toDoLists: updatedToDoLists
+    },this.afterToDoListsChangeComplete);
+    return itemToBeRemoved
+  }
 
   changeTaskName = (toDoListItemIDToBeChanged, newTaskName) => {
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
-    listToUpdate.items[indexOfListItemToBeChanged] = {
-      id: listToUpdate.items[indexOfListItemToBeChanged].id,
-      description: newTaskName,
-      due_date: listToUpdate.items[indexOfListItemToBeChanged].due_date,
-      status: listToUpdate.items[indexOfListItemToBeChanged].status
-    }
-    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
-    this.setState({
-      toDoLists: copyOfToDoLists,
+    let currentListId = this.state.currentList.id;
+    let updatedToDoListslist = this.state.currentList.items.map((listItem) =>{
+      if (listItem.id === toDoListItemIDToBeChanged){
+        listItem.description = newTaskName;
+        return listItem;
+      }
+      else 
+        return listItem;
     });
-
+    let updatedToDoLists = this.state.toDoLists.map((toDoList) =>{
+      if (toDoList.id === currentListId){
+        toDoList.items = updatedToDoListslist; 
+        return toDoList;
+      }
+      else 
+        return toDoList;
+    });
+    this.setState({
+      toDoLists: updatedToDoLists
+    }, this.afterToDoListsChangeComplete);
   }
+
+  registerChangeTaskName = (toDoListItemIDToBeChanged, newTaskName) => {
+    let toDoListItemToBeRemoved = this.state.currentList.items.find(listItem => listItem.id === toDoListItemIDToBeChanged);
+    if (toDoListItemToBeRemoved.description === newTaskName){
+      return
+    }
+    let transaction = new AddChangeTaskName_Transaction(this,toDoListItemIDToBeChanged,toDoListItemToBeRemoved.description,newTaskName);
+    this.tps.addTransaction(transaction);
+  }
+
 
   changeDueDate = (toDoListItemIDToBeChanged, newDueDate) => {
     if (newDueDate === ""){
       newDueDate = "No Date";
     }
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
-    
-    listToUpdate.items[indexOfListItemToBeChanged] = {
-      id: listToUpdate.items[indexOfListItemToBeChanged].id,
-      description: listToUpdate.items[indexOfListItemToBeChanged].description,
-      due_date: newDueDate,
-      status: listToUpdate.items[indexOfListItemToBeChanged].status
-    }
-    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
-    this.setState({
-      toDoLists: copyOfToDoLists,
-    });
-
-  }
-
-  
-  changeStatus= (toDoListItemIDToBeChanged, newStatus) => {
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
-    
-    listToUpdate.items[indexOfListItemToBeChanged] = {
-      id: listToUpdate.items[indexOfListItemToBeChanged].id,
-      description: listToUpdate.items[indexOfListItemToBeChanged].description,
-      due_date: listToUpdate.items[indexOfListItemToBeChanged].due_date,
-      status: newStatus
-    }
-    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
-    this.setState({
-      toDoLists: copyOfToDoLists,
-    });
-
-  }
-
-  removeListItem =(toDoListItemIDToBeRemoved) => {
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeRemoved);
-    let itemToBeRemoved = listToUpdate.items[indexOfListItemToBeChanged];
-    listToUpdate.items.splice(indexOfListItemToBeChanged,1);
-
-    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
-
-    this.setState({
-      toDoLists: copyOfToDoLists,
-    });
-    return itemToBeRemoved
-  }
-
-
-  moveItem(fromIndex, toIndex) {
-
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    listToUpdate.items.splice(toIndex, 0, listToUpdate.items.splice(fromIndex, 1)[0]);
-    copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
-
-    this.setState({
-      toDoLists: copyOfToDoLists,
-    });
-
-
-}
-    
-  
-addItemAtIndex(listItemToAdd, index) {
-  let copyOfToDoLists = this.state.toDoLists;
-  let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-  let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-  listToUpdate.items.splice(index, 0, listItemToAdd);
-  copyOfToDoLists[indexOfListToUpdate] = listToUpdate;
-
-  this.setState({
-    toDoLists: copyOfToDoLists,
-  });
-  }
-
-
-  findIndexOfListItemWithListItemIDInCurrentList = (listItemIDtoFind) => {
-    for (let i = 0; i < this.state.currentList.items.length; i++) {
-      if (this.state.currentList.items[i].id === listItemIDtoFind){
-        return i;
+    let currentListId = this.state.currentList.id;
+    let updatedToDoListslist = this.state.currentList.items.map((listItem) =>{
+      if (listItem.id === toDoListItemIDToBeChanged){
+        listItem.due_date = newDueDate;
+        return listItem;
       }
-    }
-  }
-
-  changeListName(listIDToBeRenamed){
-    
-
-  }
-
-
-
-  registerChangeTaskName = (toDoListItemIDToBeChanged, newTaskName) => {
-    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
-    let toDoListItemToBeRemoved = this.state.currentList.items[indexOfListItemToBeChanged];
-    if (toDoListItemToBeRemoved.description === newTaskName){
-      return
-    }
-    let transaction = new AddChangeTaskName_Transaction(this,toDoListItemIDToBeChanged,toDoListItemToBeRemoved.description,newTaskName);
-    let copyOfTps = this.state.tps;
-    copyOfTps.addTransaction(transaction);
+      else 
+        return listItem;
+    });
+    let updatedToDoLists = this.state.toDoLists.map((toDoList) =>{
+      if (toDoList.id === currentListId){
+        toDoList.items = updatedToDoListslist; 
+        return toDoList;
+      }
+      else 
+        return toDoList;
+    });
     this.setState({
-      tps:copyOfTps
-    })
+      toDoLists: updatedToDoLists
+    }, this.afterToDoListsChangeComplete);
   }
 
+  
   registerChangeDueDate = (toDoListItemIDToBeChanged, newDueDate) => {
-    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
-    let toDoListItemToBeRemoved = this.state.currentList.items[indexOfListItemToBeChanged];
+    let toDoListItemToBeRemoved = this.state.currentList.items.find(listItem => listItem.id === toDoListItemIDToBeChanged);
     if ((toDoListItemToBeRemoved.due_date === "No Date" && newDueDate ==="" ) || (toDoListItemToBeRemoved.due_date === newDueDate)){
       return
     }
     let transaction = new AddChangeDueDate_Transaction(this,toDoListItemIDToBeChanged,toDoListItemToBeRemoved.due_date,newDueDate);
-    let copyOfTps = this.state.tps;
-    copyOfTps.addTransaction(transaction);
+    this.tps.addTransaction(transaction);
+  }
+
+
+
+  changeStatus= (toDoListItemIDToBeChanged, newStatus) => {
+    let currentListId = this.state.currentList.id;
+    let updatedToDoListslist = this.state.currentList.items.map((listItem) =>{
+      if (listItem.id === toDoListItemIDToBeChanged){
+        listItem.status = newStatus;
+        return listItem;
+      }
+      else 
+        return listItem;
+    });
+    let updatedToDoLists = this.state.toDoLists.map((toDoList) =>{
+      if (toDoList.id === currentListId){
+        toDoList.items = updatedToDoListslist; 
+        return toDoList;
+      }
+      else 
+        return toDoList;
+    });
     this.setState({
-      tps:copyOfTps
-    })
+      toDoLists: updatedToDoLists
+    }, this.afterToDoListsChangeComplete);
   }
 
   registerChangeStatus = (toDoListItemIDToBeChanged, newStatus) => {
-    let indexOfListItemToBeChanged = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeChanged);
-    let toDoListItemToBeRemoved = this.state.currentList.items[indexOfListItemToBeChanged];
+    let toDoListItemToBeRemoved = this.state.currentList.items.find(listItem => listItem.id === toDoListItemIDToBeChanged);
     if (toDoListItemToBeRemoved.status === newStatus){
       return
     }
     let transaction = new AddChangeStatus_Transaction(this,toDoListItemIDToBeChanged,toDoListItemToBeRemoved.status,newStatus);
-    let copyOfTps = this.state.tps;
-    copyOfTps.addTransaction(transaction);
-    this.setState({
-      tps:copyOfTps
-    })
+    this.tps.addTransaction(transaction);
   }
-
-
-  
 
   registerDeleteListItem = (toDoListItemIDToBeRemoved) => {
-    let initIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemIDToBeRemoved);
-    let toDoListItemToBeRemoved = this.state.currentList.items[initIndex];
+    let toDoListItemToBeRemoved = this.state.currentList.items.find(listItem => listItem.id === toDoListItemIDToBeRemoved);
+    let initIndex = this.state.currentList.items.indexOf(toDoListItemToBeRemoved);
     let transaction = new AddDeleteListItem_Transaction(this,initIndex,toDoListItemToBeRemoved);
-    let copyOfTps = this.state.tps;
-    copyOfTps.addTransaction(transaction);
-    this.setState({
-      tps:copyOfTps
-    })
+    this.tps.addTransaction(transaction);
   }
 
-  registerMoveListItemDown =(toDoListItemToBeMoved) => {
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let foundIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemToBeMoved);
-    if (foundIndex === listToUpdate.items.length - 1){
+  addItemAtIndex(listItemToAdd, index) {
+    let currentListId = this.state.currentList.id;
+    let updatedToDoLists = this.state.toDoLists.map((toDoList) =>{
+      if (toDoList.id === currentListId){
+        toDoList.items.splice(index,0,listItemToAdd) 
+        return toDoList;
+      }
+      else 
+        return toDoList;
+    });
+    this.setState({
+      toDoLists: updatedToDoLists
+    }, this.afterToDoListsChangeComplete);
+
+  }
+
+  moveItem(fromIndex, toIndex) {
+    let currentListId = this.state.currentList.id;
+    let updatedToDoLists = this.state.toDoLists.map((toDoList) =>{
+      if (toDoList.id === currentListId){
+        toDoList.items.splice(toIndex, 0, toDoList.items.splice(fromIndex, 1)[0]);
+        return toDoList;
+      }
+      else {
+        return toDoList;
+      }
+    })
+      this.setState({
+          toDoLists: updatedToDoLists
+        }, this.afterToDoListsChangeComplete);
+      }
+
+
+  registerMoveListItemDown =(toDoListItemIdToBeMoved) => {
+    let toDoListItemToBeMoved = this.state.currentList.items.find(listItem => listItem.id === toDoListItemIdToBeMoved);
+    let foundIndex = this.state.currentList.items.indexOf(toDoListItemToBeMoved);
+    if (foundIndex === this.state.currentList.items.length - 1){
       return
     }
-    //////
     let transaction = new AddMoveListItem_Transaction(this,foundIndex,foundIndex + 1);
-    let copyOfTps = this.state.tps;
-    copyOfTps.addTransaction(transaction);
-
-    this.setState({
-      tps:copyOfTps
-    })
-        
+    this.tps.addTransaction(transaction);        
   }
 
-  registerMoveListItemUp =(toDoListItemToBeMoved) => {
-    let copyOfToDoLists = this.state.toDoLists;
-    let indexOfListToUpdate = copyOfToDoLists.indexOf(this.state.currentList);
-    let listToUpdate = copyOfToDoLists[indexOfListToUpdate];
-    let foundIndex = this.findIndexOfListItemWithListItemIDInCurrentList(toDoListItemToBeMoved);
+  registerMoveListItemUp =(toDoListItemIdToBeMoved) => {
+    let toDoListItemToBeMoved = this.state.currentList.items.find(listItem => listItem.id === toDoListItemIdToBeMoved);
+    let foundIndex = this.state.currentList.items.indexOf(toDoListItemToBeMoved);
     if (foundIndex === 0){
       return
     }
-    //////
     let transaction = new AddMoveListItem_Transaction(this,foundIndex,foundIndex - 1);
-    let copyOfTps = this.state.tps;
-    copyOfTps.addTransaction(transaction);
+    this.tps.addTransaction(transaction);        
+  }
 
-    this.setState({
-      tps:copyOfTps
-    })
-        
+  changeListName(listIDToBeRenamed){
   }
 
 
-
-
   undo = () =>{
-    if (this.state.tps.hasTransactionToUndo()) {
-        this.state.tps.undoTransaction();
+    if (this.tps.hasTransactionToUndo()) {
+        this.tps.undoTransaction();
         // if (!this.state.tps.hasTransactionToUndo()) {
         //     this.view.disableButton("undo-button");
         // }
         // this.view.enableButton("redo-button");
     }
-    this.setState({
-      tps:this.state.tps
-    })
 } 
 
 redo = () =>{
-    if (this.state.tps.hasTransactionToRedo()) {
-        this.state.tps.doTransaction();
+    if (this.tps.hasTransactionToRedo()) {
+        this.tps.doTransaction();
         // if (!this.tps.hasTransactionToRedo()) {
         //     this.view.disableButton("redo-button");
         // }
         // this.view.enableButton("undo-button");
     }
-    this.setState({
-      tps:this.state.tps
-    })
 }
-
-
-
 
 
 
@@ -399,7 +350,7 @@ redo = () =>{
 
     // WILL THIS WORK? @todo
     let toDoListsString = JSON.stringify(this.state.toDoLists);
-    localStorage.setItem("recent_work", toDoListsString);
+    localStorage.setItem("recentLists", toDoListsString);
   }
 
   render() {
