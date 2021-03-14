@@ -108,7 +108,7 @@ border-top-style: solid;
 
 #todo-list-items-div {
     height:96%;
-    overflow-y: scroll;
+    overflow-y:auto;
     scrollbar-width: thin;
 
 }
