@@ -118,11 +118,11 @@ class ToDoItem extends Component {
             } 
                 <div className=' test-4-col'></div>
                 <div className=' list-controls-col'>
-                    <KeyboardArrowUp className={'list-item-control todo-button' + ( ifFirst ? " disable_button " : "")}
+                    <KeyboardArrowUp className={'list-item-control todo-button ' + ( ifFirst ? " disable_button " : "")}
                         onClick = {this.moveUpListItem} />
-                    <KeyboardArrowDown className={'list-item-control todo-button' + ( ifLast ? " disable_button " : "")}
+                    <KeyboardArrowDown className={'list-item-control todo-button margin-left-30' + ( ifLast ? " disable_button " : "")}
                         onClick = {this.moveDownListItem} />
-                    <Close className='list-item-control todo-button' 
+                    <Close className='list-item-control todo-button margin-left-30'  
                         onClick={this.removeListItem}/>
                     <div className='list-item-control'></div>
                     <div className='list-item-control'></div>

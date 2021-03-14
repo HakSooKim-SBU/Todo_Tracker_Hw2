@@ -22,8 +22,8 @@ flex-direction: column;
 
 #left-sidebar {
     width: 15.5%;
-
 }
+
 #container{
     width: 99%;
     height: 92.5%;
@@ -121,7 +121,25 @@ border-top-style: solid;
     align-items: center;
 }
 
+.margin-left-10{
+    margin-left: 10%;
+}
 
+.margin-left-30{
+    margin-left: 30%;
+}
+
+.margin-left-5{ 
+margin-left:5%;
+}
+
+.width-40{
+    width: 40%;
+}
+
+.width-60{
+    width : 60%
+}
 
 .list-controls-col {
     width: 7%;

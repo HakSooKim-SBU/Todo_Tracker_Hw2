@@ -33,12 +33,12 @@ class Workspace extends Component {
                     <div id="date-col-header" className="todo-button listItem-header-col">Due Date</div>
                     <div id="status-col-header" className="todo-button listItem-header-col">Status</div>
                     <div className="list-controls-col listItem-header-col" display="flex" flexDirection="row" flexWrap="nowrap">
-                        
+                        {( !isBeingEdited ? <div className = "width-60" ></div> : <div className = "width-40"></div>)} 
                         <AddBox id="add-item-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button " : "") }
                             onClick={this.handleAddNewToDoListItem} />
-                        <Delete id="delete-list-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button " : "") }
+                        <Delete id="delete-list-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button margin-left-5 " : " margin-left-10") }
                             onClick={this.handleDeleteListButton} />
-                        <Close id="close-list-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button " : "") }
+                        <Close id="close-list-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button margin-left-5 " : " margin-left-10") }
                             onClick={this.handleCloseListbutton} />
                     </div>
                 </div>
