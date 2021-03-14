@@ -28,11 +28,11 @@ class Workspace extends Component {
         let isBeingEdited = this.props.checkIfBeingEditedCallback();
         return (
             <div id="workspace">
-                <div id="todo-list-header-card" className="list-item-card">
-                    <div id="task-col-header" className="item-col todo-button">Task</div>
-                    <div id="date-col-header" className="item-col todo-button">Due Date</div>
-                    <div id="status-col-header" className="item-col todo-button">Status</div>
-                    <div className="item-col" display="flex" flexDirection="row" flexWrap="nowrap">
+                <div id="todo-list-header-card">
+                    <div id="task-col-header" className="todo-button listItem-header-col">Task</div>
+                    <div id="date-col-header" className="todo-button listItem-header-col">Due Date</div>
+                    <div id="status-col-header" className="todo-button listItem-header-col">Status</div>
+                    <div className="list-controls-col listItem-header-col" display="flex" flexDirection="row" flexWrap="nowrap">
                         
                         <AddBox id="add-item-button" className={"list-item-control material-icons todo-button"  + ( !isBeingEdited ? " disable_button " : "") }
                             onClick={this.handleAddNewToDoListItem} />
@@ -54,6 +54,9 @@ class Workspace extends Component {
                             registerDeleteListItemCallback = {this.props.registerDeleteListItemCallback}
                             registerMoveListItemUpCallback = {this.props.registerMoveListItemUpCallback}
                             registerMoveListItemDownCallback = {this.props.registerMoveListItemDownCallback}
+                            lastListItemId = {this.props.toDoListItems[this.props.toDoListItems.length - 1].id}
+                            firstListItemId = {this.props.toDoListItems[0].id}
+
                         />))
                     }
                 </div>

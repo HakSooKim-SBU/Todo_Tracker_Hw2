@@ -38,7 +38,7 @@ class ListLink extends Component {
         // console.log("\t\t\tListLink render");
         if(this.state.hasCurrentListDoubleClicked){
             return(
-                <input type="text" ref={input => input && input.focus()} onBlur={this.renameCurrentList}
+                <input className = "list-edit-input-col" type="text" ref={input => input && input.focus()} onBlur={this.renameCurrentList}
                     defaultValue={this.props.toDoList.name}
              />                 
             )

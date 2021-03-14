@@ -107,25 +107,45 @@ export class App extends Component {
     this.tps.addTransaction(transaction);
   }
 
-  addNewToDoListItem = () => {
+  // addListItemAtLast = (newListItem) => {
+  //   let currentListId = this.state.currentList.id;
+  //   let updatedToDoListsList = [...this.state.currentList.items, newListItem];
+  //   console.log(this.state.toDoLists);
+  //   let updatedToDoLists = this.state.toDoLists.map((toDoList) => {
+  //     if (toDoList.id === currentListId){
+  //       toDoList.items = updatedToDoListsList; 
+  //       return toDoList;
+  //     }
+  //     else 
+  //       return toDoList;
+  //   }); 
+  //   this.setState({
+  //     toDoLists: updatedToDoLists,
+  //     nextListItemId: this.state.nextListItemId + 1
+  //   }, this.afterToDoListsChangeComplete);
+  //   return newListItem
+  // }
+
+  addListItemAtLast = (newListItem) => {
+    let updatedCurrentList = this.state.currentList.items.map((listItem) =>{
+      return listItem
+    });
     let currentListId = this.state.currentList.id;
-    let newListItem = this.makeNewToDoListItem();
-    let updatedToDoListsList = [...this.state.currentList.items, newListItem];
-    console.log(this.state.toDoLists);
+    updatedCurrentList.push(newListItem);
     let updatedToDoLists = this.state.toDoLists.map((toDoList) => {
       if (toDoList.id === currentListId){
-        toDoList.items = updatedToDoListsList; 
+        toDoList.items = updatedCurrentList; 
         return toDoList;
       }
       else 
         return toDoList;
-    });   
+    }); 
     this.setState({
       toDoLists: updatedToDoLists,
-      nextListItemId: this.state.nextListItemId + 1
     }, this.afterToDoListsChangeComplete);
-    return newListItem
   }
+
+
 
   makeNewToDoListItem = () =>  {
     let newToDoListItem = {
@@ -134,6 +154,9 @@ export class App extends Component {
       due_date: "No Date",
       status: "incomplete"
     };
+    this.setState({
+      nextListItemId: this.state.nextListItemId + 1
+    })
     return newToDoListItem
   }
 
@@ -397,7 +420,9 @@ confirmDeletion = () =>{
     let items = this.state.currentList.items;
         return (
           <div id="root">
+           {/* <div id = "container-primary"> */}
             <Navbar />
+            <div id = "container">
             <LeftSidebar 
               toDoLists={this.state.toDoLists}
               loadToDoListCallback={this.loadToDoList}
@@ -421,20 +446,21 @@ confirmDeletion = () =>{
               cancelBeingEditedCallback = {this.cancelBeingEdited}
               checkIfBeingEditedCallback = {this.checkIfBeingEdited}
             />
+            </div >
             <div id = "modal-overlay" style={{ display: this.state.deleteConfirmationClicked ? 'block' : 'none' }} >
               <div className="modal" id="delete_modal" >
-                <div className="modal_dialog">
-                  <header className="dialog_header">
-                    Delete list?
-                    <div onClick={this.confirmationClickHandle} id="close-modal-button" className="list-item-control material-icons todo-button">close</div>
-                  </header>
+                <div className="modal-header header">
+                  <h3> Delete list? </h3>
+                    <div onClick={this.confirmationClickHandle} id="close-modal-button" className="modal-button">X</div>
+                </div>
+                <div className="modal-header">
                   <button id="dialog_yes_button" onClick={this.confirmDeletion}  className="modal-button">Confirm</button>
                   <button id="dialog_no_button" onClick={this.confirmationClickHandle} className="modal-button">Cancel</button>
-            
                 </div>
               </div>
              </div>
-          </div>
+             </div>
+          // </div>
         );
     }
     

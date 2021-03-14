@@ -72,6 +72,14 @@ class ToDoItem extends Component {
         this.props.registerMoveListItemDownCallback(this.props.toDoListItem.id)
      }
 
+     isLastItem = () =>{
+         return this.props.toDoListItem.id === this.props.lastListItemId
+     }
+
+     isFirstItem = () =>{
+        return this.props.toDoListItem.id === this.props.firstListItemId
+    }
+
     render() {
         // DISPLAY WHERE WE ARE
         // console.log("\t\t\tToDoItem render");
@@ -80,49 +88,45 @@ class ToDoItem extends Component {
         if (listItem.status === "incomplete"){
             statusType = "status-incomplete";
         }
+        let ifLast = this.isLastItem()
+        let ifFirst = this.isFirstItem()
+        console.log(ifLast + "!!")
+        console.log(ifFirst + "!!")
+
+
 
         return (
             <div id={'todo-list-item-' + listItem.id} className='list-item-card'>
             {this.state.hasTaskClicked
-            ? <input type="text" ref={input => input && input.focus()} onBlur={this.changeTask} defaultValue = {listItem.description}/>
-            : <div onClick={this.taskHandleClick} className='item-col task-col'>{listItem.description}</div>
+            ? <input type="text" className='input-col' ref={input => input && input.focus()} onBlur={this.changeTask } defaultValue = {listItem.description}/>
+            : <div onClick={this.taskHandleClick} className='listItem-col'>{listItem.description}</div>
             }  
             {this.state.hasDueDateClicked
-            ? <input type="date" ref={input => input && input.focus()} onBlur={this.changeDueDate}
-                defaultValue={listItem.due_date}
-             />
-            : <div onClick={this.dueDateHandleClick} className='item-col due-date-col'>{listItem.due_date}</div>
-
+            ? <input type="date" ref={input => input && input.focus()} className='input-col' onBlur={this.changeDueDate}
+                defaultValue={listItem.due_date}/>
+            : <div onClick={this.dueDateHandleClick} className='listItem-col'>{listItem.due_date}</div>
             } 
             {this.state.hasStatusClicked
             ? <select defaultValue={listItem.status} onBlur={this.changeStatus}
-            ref={select => select && select.focus()}>
+            // ref={select => select.focus()} className='input-col'  >
+
+            ref={select => select && select.focus()} className='input-col'  >
             <option value = 'complete'> complete  </option>
             <option value = 'incomplete'> incomplete  </option>
             </select> 
-            : <div onClick={this.statusHandleClick} className='item-col status-col' className={statusType}>{listItem.status}</div>
+            : <div onClick={this.statusHandleClick} className= {'listItem-col ' + statusType}>{listItem.status}</div>
             } 
-                <div className='item-col test-4-col'></div>
-                <div className='item-col list-controls-col'>
-                    <KeyboardArrowUp className='list-item-control todo-button'
+                <div className=' test-4-col'></div>
+                <div className=' list-controls-col'>
+                    <KeyboardArrowUp className={'list-item-control todo-button' + ( ifFirst ? " disable_button " : "")}
                         onClick = {this.moveUpListItem} />
-                    <KeyboardArrowDown className='list-item-control todo-button'
+                    <KeyboardArrowDown className={'list-item-control todo-button' + ( ifLast ? " disable_button " : "")}
                         onClick = {this.moveDownListItem} />
                     <Close className='list-item-control todo-button' 
                         onClick={this.removeListItem}/>
                     <div className='list-item-control'></div>
                     <div className='list-item-control'></div>
                 </div>
-
-  
-
-
-
-
-
-
-
-                
             </div>
         )
     }

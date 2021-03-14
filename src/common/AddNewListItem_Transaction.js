@@ -8,13 +8,14 @@ export default class AddNewListItem_Transaction extends jsTPS_Transaction {
     constructor(initApp) {
         super();
         this.app = initApp
+        this.newListItem = this.app.makeNewToDoListItem();
     }
     
     doTransaction() {
-        this.newAddedListItem = this.app.addNewToDoListItem()
+        this.newAddedListItem = this.app.addListItemAtLast(this.newListItem)
     }
 
     undoTransaction() {
-        this.app.removeListItem(this.newAddedListItem.id)
+        this.app.removeListItem(this.newListItem.id)
     }
 }
