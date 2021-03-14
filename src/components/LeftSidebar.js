@@ -9,49 +9,19 @@ import { AlternateEmail } from '@material-ui/icons';
 class LeftSidebar extends Component {
     constructor(props) {
         super(props);
-        
-
-
     }
-
-    // Document.event 
 
     componentDidMount = () => {
-
-        // var map = {}; // You could also use an array
-        // onkeydown = onkeyup = function(e){
-        //     e = e ; // to deal with IE
-        //     map[e.keyCode] = e.type == 'keydown';
-        //         if (map[65] && map[67]){
-        //         alert("hello");
-        //         }
-        // }
-
-    //     const keysPressed = {};
-    //     console.log("hello");
-
-    //     document.addEventListener('keydown', e => keysPressed[e.keyCode] = true)
-    //     document.addEventListener('keyup', e => keysPressed[e.keyCode] = false)
-    //     document.addEventListener('keydown', (event) =>{
-            
-    //         console.log("hi");
-
-    //         if ((keysPressed[65] && keysPressed[67]))
-    //         alert("hello");
-    //     }
-        
-    //     )
+        document.addEventListener('keydown', event => {
+            if((event.key === "z" || event.key ==="Z") && event.ctrlKey){
+                this.props.undoCallback();
+            }
+            if((event.key === "y" || event.key ==="Y") && event.ctrlKey){
+                this.props.redoCallback();
+            }
+        })
     }
 
-        
-
-
-
-
-
-
-
-    
     handleAddNewList = () => {
         this.props.addNewListCallback();
     }
