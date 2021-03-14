@@ -30,12 +30,15 @@ class ListLink extends Component {
         let newCurrentListName = event.target.value;
         this.props.changeListNameCallback(this.props.toDoList.id,newCurrentListName);
         this.handleRenameList();
-
     }
 
+    isCurrentList = () => {
+        return this.props.currentListId === this.props.toDoList.id
+    }
     render() {
         // DISPLAY WHERE WE ARE
         // console.log("\t\t\tListLink render");
+        let ifCurrentList = this.isCurrentList();
         if(this.state.hasCurrentListDoubleClicked){
             return(
                 <input className = "list-edit-input-col" type="text" ref={input => input && input.focus()} onBlur={this.renameCurrentList}
@@ -45,7 +48,7 @@ class ListLink extends Component {
         }
         else{
         return (
-            <div className='todo-list-button' onClick={this.handleLoadList} onDoubleClick= {this.handleRenameList} >
+            <div id = {ifCurrentList ? "currentList" : ""} className='todo-list-button' onClick={this.handleLoadList} onDoubleClick= {this.handleRenameList} >
                 {this.props.toDoList.name}<br />
             </div>
             )

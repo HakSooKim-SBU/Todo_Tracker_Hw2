@@ -424,6 +424,7 @@ confirmDeletion = () =>{
             <Navbar />
             <div id = "container">
             <LeftSidebar 
+              currentListId={this.state.currentList.id}
               toDoLists={this.state.toDoLists}
               loadToDoListCallback={this.loadToDoList}
               addNewListCallback={this.addNewList}

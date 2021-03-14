@@ -56,6 +56,10 @@ font-size: larger;
     margin-top: 0.5%;
     font-weight: normal;
 }
+
+#currentList{
+    color: rgb(255,200,25);
+}
 #undo-button{
     /* background-color: red; */
 }
@@ -145,3 +149,4 @@ font-weight:lighter;
     pointer-events:none !important;
     cursor: default !important;
 }
+
