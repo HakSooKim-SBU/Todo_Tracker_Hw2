@@ -156,7 +156,7 @@ export class App extends Component {
     };
     this.setState({
       nextListItemId: this.state.nextListItemId + 1
-    })
+    }, this.afterToDoListsChangeComplete);
     return newToDoListItem
   }
 
